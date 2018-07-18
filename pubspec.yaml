@@ -1,0 +1,16 @@
+name: prototype_dynamic_ui
+description: A new Flutter application.
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.11.3+16
+  audioplayers:
+  flutter_staggered_grid_view:
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/menu.mp3
+    - assets/notification.wav
