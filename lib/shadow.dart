@@ -31,9 +31,7 @@ class ShadowText extends StatelessWidget {
 }
 
 class ShadowBoxText extends StatelessWidget {
-  TextAlign textAlign;
-
-  ShadowBoxText(this.data, {this.textAlign, this.style}) : assert(data != null);
+  ShadowBoxText(this.data, {this.style}) : assert(data != null);
 
   final String data;
   final TextStyle style;
@@ -44,14 +42,15 @@ class ShadowBoxText extends StatelessWidget {
         children: [
           new Container(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.5),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.5),
               child: new Text(
                 data,
                 style: style.copyWith(color: Colors.white),
               ),
             ),
-            decoration: new BoxDecoration (
-                color: new Color(0x22000000),
+            decoration: new BoxDecoration(
+              color: new Color(0x22000000),
             ),
           ),
         ],
@@ -59,4 +58,3 @@ class ShadowBoxText extends StatelessWidget {
     );
   }
 }
-

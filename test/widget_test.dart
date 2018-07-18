@@ -4,8 +4,4 @@
 // find child widgets in the widget tree, read text, and verify that the values of widget properties
 // are correct.
 
-import 'package:flutter/material.dart';
-
-import 'package:prototype_dynamic_ui/main.dart';
-
 void main() {}

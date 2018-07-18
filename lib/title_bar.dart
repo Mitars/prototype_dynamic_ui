@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prototype_dynamic_ui/shadow.dart';
 
 class TitleBar extends StatefulWidget {
-  AudioCache player;
+  final AudioCache player;
 
   TitleBar(this.player);
 

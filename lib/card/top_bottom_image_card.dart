@@ -4,89 +4,89 @@ import 'package:flutter/material.dart';
 import 'package:prototype_dynamic_ui/shadow.dart';
 
 class FoodCard extends StatefulWidget {
-
-  final String restaurant;
-  final double price;
   final String title;
-  final String url;
+  final IconData topLeftIcon; // TODO: Swap with restaurant logo.
+  final String topLeftText;
+  final double topRightNumber;
+  final String imageUrl;
   final String description;
   final double height;
 
-  // Swap with restaurant logo.
-  final IconData icon;
-
-  FoodCard(this.title, this.price, this.restaurant, this.url, this.icon, {this.height, this.description});
+  FoodCard(this.title,
+      {this.topRightNumber,
+      this.topLeftText,
+      this.imageUrl,
+      this.topLeftIcon,
+      this.height,
+      this.description});
 
   @override
   _FoodCardState createState() => _FoodCardState();
 }
 
-class _FoodCardState extends State<FoodCard> with TickerProviderStateMixin {
-
+class _FoodCardState extends State<FoodCard> with SingleTickerProviderStateMixin {
   Random random = new Random();
 
   AnimationController controller;
   Animation<double> animation;
 
-  AnimationController controllerFreeze;
-  Animation<double> animationFreeze;
-
-  AnimationController controllerBack;
-  Animation<double> animationBack;
-
   double animationValue = 0.0;
-
-  AnimationController nextController;
+  ForwardBackwardState forwardBackwardState;
 
   @override
   void initState() {
+    forwardBackwardState = ForwardBackwardState.forward;
+
     controller = new AnimationController(duration: new Duration(milliseconds: 5000), vsync: this);
     animation = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
     animation.addListener(() {
       this.setState(() {
-        animationValue = animation.value;
-        if (animation.isCompleted)
+        if (animation.isCompleted) {
+          switch(forwardBackwardState)
+          {
+            case ForwardBackwardState.forward:
+              controller.duration  = new Duration(milliseconds: 2000 + random.nextInt(3000));
+              forwardBackwardState = ForwardBackwardState.end;
+              break;
+
+            case ForwardBackwardState.end:
+              controller.duration  = new Duration(milliseconds: 1000 + random.nextInt(5000));
+              forwardBackwardState = ForwardBackwardState.backward;
+              break;
+
+            case ForwardBackwardState.backward:
+              controller.duration  = new Duration(milliseconds: 2000 + random.nextInt(3000));
+              forwardBackwardState = ForwardBackwardState.start;
+              break;
+
+            case ForwardBackwardState.start:
+              controller.duration  = new Duration(milliseconds: 1000 + random.nextInt(5000));
+              forwardBackwardState = ForwardBackwardState.forward;
+              break;
+          }
+
+          controller.reset();
+          controller.forward();
+        }
+        
+        switch(forwardBackwardState)
         {
-          nextController = controllerBack;
-          controllerFreeze.duration = new Duration(milliseconds: 500 + random.nextInt(5000));
-          controllerFreeze.reset();
-          controllerFreeze.forward();
+          case ForwardBackwardState.forward:
+            animationValue = animation.value;
+            break;
+
+          case ForwardBackwardState.backward:
+            animationValue = 1.0 - animation.value;
+            break;
+
+          default:
+            break;
         }
       });
     });
     animation.addStatusListener((AnimationStatus status) {});
 
-    controllerBack = new AnimationController(duration: new Duration(milliseconds: 5000), vsync: this);
-    animationBack = new CurvedAnimation(parent: controllerBack, curve: Curves.easeInOut);
-    animationBack.addListener(() {
-      this.setState(() {
-        animationValue = 1.0 - animationBack.value;
-        if (animationBack.isCompleted)
-        {
-          nextController = controller;
-          controllerFreeze.duration = new Duration(milliseconds: 500 + random.nextInt(5000));
-          controllerFreeze.reset();
-          controllerFreeze.forward();
-        }
-      });
-    });
-    animationBack.addStatusListener((AnimationStatus status) {});
-
-    controllerFreeze = new AnimationController(duration: new Duration(milliseconds: 500 + random.nextInt(5000)), vsync: this);
-    animationFreeze = new CurvedAnimation(parent: controllerFreeze, curve: Curves.linear);
-    animationFreeze.addListener(() {
-      this.setState(() {
-        if (animationFreeze.isCompleted)
-      {
-          nextController.reset();
-          nextController.forward();
-        }
-      });
-    });
-    animationFreeze.addStatusListener((AnimationStatus status) {});
-
-    nextController = controller;
-    controllerFreeze.forward();
+    controller.forward();
 
     super.initState();
   }
@@ -96,9 +96,6 @@ class _FoodCardState extends State<FoodCard> with TickerProviderStateMixin {
   @override
   void dispose() {
     controller.dispose();
-    controllerBack.dispose();
-    controllerFreeze.dispose();
-
     super.dispose();
   }
 
@@ -113,20 +110,20 @@ class _FoodCardState extends State<FoodCard> with TickerProviderStateMixin {
             children: <Widget>[
               Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                 child: new Row(
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: new Icon(
-                        widget.icon,
+                        widget.topLeftIcon,
                         color: Colors.blueAccent,
                         size: 16.0,
                       ),
                     ),
                     new Expanded(
                       child: new Text(
-                        widget.restaurant,
+                        widget.topLeftText,
                         style: new TextStyle(
                           color: new Color(0xFF555555),
                         ),
@@ -134,7 +131,7 @@ class _FoodCardState extends State<FoodCard> with TickerProviderStateMixin {
                     ),
                     Align(
                       child: new Text(
-                        '${widget.price.toStringAsFixed(0)} rsd',
+                        '${widget.topRightNumber.toStringAsFixed(0)} rsd',
                         textAlign: TextAlign.right,
                         style: new TextStyle(
                             color: Colors.blueAccent, fontSize: 12.0),
@@ -149,7 +146,7 @@ class _FoodCardState extends State<FoodCard> with TickerProviderStateMixin {
                     image: new DecorationImage(
                       alignment: new Alignment(0.0, animationValue * 2.0 - 1.0),
                       image: NetworkImage(
-                        widget.url,
+                        widget.imageUrl,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -188,4 +185,11 @@ class _FoodCardState extends State<FoodCard> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+enum ForwardBackwardState {
+  forward,
+  start,
+  backward,
+  end,
 }
