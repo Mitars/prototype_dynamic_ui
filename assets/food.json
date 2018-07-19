@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Spagete Bolonjeze",
+    "price": "350.0",
+    "description": "Spagete, Bolonjez sos (Paradajz, Luk, Mleveno Meso)",
+    "restaurant": "Extra Food",
+    "imageUrl": "https://img.taste.com.au/VFkGwzXU/w720-h480-cfill-q80/taste/2016/11/spaghetti-bolognese-106560-1.jpeg"
+  },
+  {
+    "title": "Capricoza",
+    "price": "350.0",
+    "description": "Testo, Pecurke, Sunka",
+    "restaurant": "Big Pizza",
+    "imageUrl": "https://recipes.timesofindia.com/photo/53110049.cms"
+  }
+]

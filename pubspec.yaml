@@ -14,3 +14,4 @@ flutter:
   assets:
     - assets/menu.mp3
     - assets/notification.wav
+    - assets/food.json

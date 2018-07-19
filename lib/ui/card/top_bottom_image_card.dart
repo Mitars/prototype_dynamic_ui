@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:prototype_dynamic_ui/shadow.dart';
+import 'package:prototype_dynamic_ui/ui/shadow.dart';
 
 class FoodCard extends StatefulWidget {
   final String title;
