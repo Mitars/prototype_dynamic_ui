@@ -18,13 +18,14 @@ export 'package:flutter/physics.dart' show Simulation, ScrollSpringSimulation, T
 ///    scroll behavior on iOS.
 ///  * [ClampingScrollPhysics], which is the analogous physics for Android's
 ///    clamping behavior.
-class BouncingScrollPhysics extends ScrollPhysics {
+class CustomFreeScrollBouncePhysics extends ScrollPhysics {
   /// Creates scroll physics that bounce back from the edge.
-  const BouncingScrollPhysics({ ScrollPhysics parent }) : super(parent: parent);
+  const CustomFreeScrollBouncePhysics({ ScrollPhysics parent })
+      : super(parent: parent);
 
   @override
-  BouncingScrollPhysics applyTo(ScrollPhysics ancestor) {
-    return new BouncingScrollPhysics(parent: buildParent(ancestor));
+  CustomFreeScrollBouncePhysics applyTo(ScrollPhysics ancestor) {
+    return new CustomFreeScrollBouncePhysics(parent: buildParent(ancestor));
   }
 
   /// The multiple applied to overscroll to make it appear that scrolling past
@@ -83,7 +84,8 @@ class BouncingScrollPhysics extends ScrollPhysics {
       return new BouncingScrollSimulation(
         spring: spring,
         position: position.pixels,
-        velocity: velocity * 0.5, // TODO(abarth): We should move this constant closer to the drag end.
+        velocity: velocity * 0.6,
+        // TODO(abarth): We should move this constant closer to the drag end.
         leadingExtent: position.minScrollExtent,
         trailingExtent: position.maxScrollExtent,
         tolerance: tolerance,

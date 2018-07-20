@@ -1,45 +1,35 @@
-import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
-import 'package:prototype_dynamic_ui/ui/shadow.dart';
+import 'package:prototype_dynamic_ui/ui/ticker_message.dart';
 
-class TitleBar extends StatefulWidget {
-  final AudioCache player;
+class TitleBar extends StatelessWidget {
+  final String userTitle;
+  final String userImageUrl;
+  final String pointText;
+  final IconData pointIcon;
+  final String subText;
+  final String selectionTitle;
+  final String selectionImageUrl;
+  final String selectionSubText;
+  final String tickerMessage;
 
-  TitleBar(this.player);
+  NetworkImage userImage;
+  NetworkImage orderImage;
 
-  @override
-  _TitleBarState createState() => _TitleBarState();
-}
-
-class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> animation;
-
-  @override
-  void initState() {
-    animationController =
-        new AnimationController(duration: Duration(seconds: 20), vsync: this);
-    animation =
-        new CurvedAnimation(parent: animationController, curve: Curves.linear);
-    animation.addListener(() {
-      this.setState(() {});
-    });
-
-    animation.addStatusListener((AnimationStatus status) {});
-
-    animationController.repeat();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
-  }
+  TitleBar(this.userTitle,
+      this.userImageUrl,
+      this.subText,
+      this.pointText,
+      this.pointIcon,
+      this.selectionTitle,
+      this.selectionImageUrl,
+      this.selectionSubText,
+      this.tickerMessage);
 
   @override
   Widget build(BuildContext context) {
+    userImage = NetworkImage(userImageUrl);
+    orderImage = NetworkImage(selectionImageUrl);
+
     return Stack(
       children: [
         Padding(
@@ -49,13 +39,11 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
             children: <Widget>[
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 4.0, vertical: 5.0),
+                const EdgeInsets.symmetric(horizontal: 4.0, vertical: 5.0),
                 child: InkWell(
                   child: new Container(
                     child: new CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        'https://lh3.googleusercontent.com/QGuHu5iREd_soS1IfdXO_P7cYaWcN-gbvtfVzJi4fAWmV-Y8bAF93xF2xW5BXnMMQao41w-cmzjB32nc=s139-rw',
-                      ),
+                      backgroundImage: userImage,
                     ),
                     padding: const EdgeInsets.all(2.0),
                     decoration: new BoxDecoration(
@@ -63,9 +51,7 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  onTap: () {
-                    widget.player.play('notification.wav');
-                  },
+                  onTap: () {},
                 ),
               ),
               new Expanded(
@@ -77,14 +63,14 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
                         children: <Widget>[
                           Expanded(
                             child: new Text(
-                              'Mitar',
+                              userTitle,
                               style: new TextStyle(
                                 color: Colors.white,
                               ),
                             ),
                           ),
                           new Text(
-                            'Last Ordered 09:54',
+                            subText,
                             style: new TextStyle(
                               color: new Color(0xFFCCCCCC),
                             ),
@@ -103,13 +89,13 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
                             Padding(
                               padding: const EdgeInsets.all(1.0),
                               child: new Icon(
-                                Icons.account_balance_wallet,
+                                pointIcon,
                                 color: new Color(0xFFe6c900),
                                 size: 18.0,
                               ),
                             ),
                             new Text(
-                              '520 rsd',
+                              pointText,
                               style: new TextStyle(
                                 color: new Color(0xFFe6c900),
                               ),
@@ -136,12 +122,11 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
                               padding: const EdgeInsets.all(2.0),
                               decoration: new BoxDecoration(
                                 image: new DecorationImage(
-                                  image: NetworkImage(
-                                      'https://img.taste.com.au/VFkGwzXU/w720-h480-cfill-q80/taste/2016/11/spaghetti-bolognese-106560-1.jpeg'),
+                                  image: orderImage,
                                   fit: BoxFit.cover,
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(new Radius.circular(5.0)),
+                                BorderRadius.all(new Radius.circular(5.0)),
                                 border: new Border.all(
                                   color: const Color(0xFFFFFFFF),
                                   width: 2.0,
@@ -162,7 +147,7 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
                                   ],
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(new Radius.circular(5.0)),
+                                BorderRadius.all(new Radius.circular(5.0)),
                                 border: new Border.all(
                                   color: const Color(0xFFFFFFFF),
                                   width: 2.0,
@@ -175,7 +160,7 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 3.5, vertical: 2.0),
                           child: new Text(
-                            'Spagete Bolonjeze',
+                            selectionTitle,
                             style: new TextStyle(
                               color: Colors.white,
                               fontSize: 9.0,
@@ -184,11 +169,11 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
                         ),
                         Transform(
                           transform:
-                              new Matrix4.translationValues(0.0, 10.0, 0.0),
+                          new Matrix4.translationValues(0.0, 10.0, 0.0),
                           child: Align(
                             alignment: new Alignment(0.0, 1.0),
                             child: new Text(
-                              'Extra Food',
+                              selectionSubText,
                               style: new TextStyle(
                                 color: Colors.white,
                                 fontSize: 8.0,
@@ -204,19 +189,7 @@ class _TitleBarState extends State<TitleBar> with TickerProviderStateMixin {
             ],
           ),
         ),
-        OverflowBox(
-          child: Transform(
-            //TODO: Does not support dynamic sized text nor alignment
-            transform: new Matrix4.translationValues(500 - animation.value * 1000, 30.0, 0.0),
-            child: ShadowBoxText(
-              'Not feeling hungry? How about a refreshing salad?',
-              style: new TextStyle(
-                color: Colors.white,
-                fontSize: 12.0,
-              ),
-            ),
-          ),
-        ),
+        new TickerMessage(tickerMessage),
       ],
     );
   }

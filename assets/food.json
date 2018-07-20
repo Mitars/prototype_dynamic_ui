@@ -1,16 +1,58 @@
 [
   {
     "title": "Spagete Bolonjeze",
-    "price": "350.0",
+    "price": 350.0,
     "description": "Spagete, Bolonjez sos (Paradajz, Luk, Mleveno Meso)",
     "restaurant": "Extra Food",
     "imageUrl": "https://img.taste.com.au/VFkGwzXU/w720-h480-cfill-q80/taste/2016/11/spaghetti-bolognese-106560-1.jpeg"
   },
   {
     "title": "Capricoza",
-    "price": "350.0",
+    "price": 350.0,
     "description": "Testo, Pecurke, Sunka",
     "restaurant": "Big Pizza",
     "imageUrl": "https://recipes.timesofindia.com/photo/53110049.cms"
+  },
+  {
+    "title": "Paradajz Corba",
+    "price": 120.0,
+    "description": "Paradajz, Zacini",
+    "restaurant": "Extra Food",
+    "imageUrl": "https://atmedia.imgix.net/c0d49cd0c7ff33b17764502ed22777d702599990?w=1500&fit=max"
+  },
+  {
+    "title": "Karadjordjeva Snicla",
+    "price": 290.0,
+    "description": "Testo, Pecurke, Sunka",
+    "restaurant": "Extra Food",
+    "imageUrl": "https://belgrade-beat.rs/photos/articles/366/c-1515762102.jpg"
+  },
+  {
+    "title": "Burito",
+    "price": 253.2,
+    "description": "Tortilja, Pasulj, Mleveno meso, Paprika, Luk",
+    "restaurant": "Tortilja Kasa",
+    "imageUrl": "https://img.sndimg.com/food/image/upload/w_896,h_504,c_fill,fl_progressive,q_80/v1/img/recipes/60/71/4/GidRq10yRvmCa76hJBkD_burrito4.jpg"
+  },
+  {
+    "title": "Hamburger",
+    "price": 400.0,
+    "description": "Junece meso, Krastavci, Ketchup",
+    "restaurant": "Toster Bar",
+    "imageUrl": "https://www.kraftlokator.com/wp-content/uploads/2017/04/Toster-Bar-4.jpg"
+  },
+  {
+    "title": "Vocna Torta",
+    "price": 220.0,
+    "description": "Jagode, Secer, Puding, Slag",
+    "restaurant": "Hedone",
+    "imageUrl": "https://minimalistbaker.com/wp-content/uploads/2018/02/1-Bowl-Vegan-Gluten-Free-Vanilla-Cake-Egg-free-oil-free-fluffy-perfectly-sweet-SO-delicious-vegan-glutenfree-cake-recipe-plantbased-minimalistbaker-9.jpg"
+  },
+  {
+    "title": "Test Card",
+    "price": 999.9,
+    "description": "Test card 1.0, Value 1, Value 2, Value 3, Value 4, Value 5, Value 1, Value 2, Value 3, Value 4, Value 5",
+    "restaurant": "Test",
+    "imageUrl": "https://globalfm.org/DEV/wp-content/uploads/2017/01/test.gif"
   }
 ]
