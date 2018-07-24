@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:prototype_dynamic_ui/expanding_header.dart';
+import 'package:prototype_dynamic_ui/food_card_scroller.dart';
 import 'package:prototype_dynamic_ui/general/general.dart';
 import 'package:prototype_dynamic_ui/model/food_details.dart';
-import 'package:prototype_dynamic_ui/physics/custom_free_scroll_bounce.dart';
-import 'package:prototype_dynamic_ui/ui/card/top_bottom_image_card.dart';
-import 'package:prototype_dynamic_ui/ui/shadow/shadow.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/vertical_gradient.dart';
 import 'package:prototype_dynamic_ui/ui/title_bar.dart';
 
@@ -37,12 +36,11 @@ class CoreApp extends StatefulWidget {
 }
 
 class _CoreAppState extends State<CoreApp> {
-
   static const double menuHeight = 76.0;
   double scrollOffset = menuHeight;
   ScrollController _scrollController;
-
   List<FrontFoodCard> frontFoodCards;
+  ImageProvider headerImage;
 
   Future loadMenu() async {
     String jsonString = await rootBundle.loadString('assets/food.json');
@@ -58,10 +56,17 @@ class _CoreAppState extends State<CoreApp> {
   initState() {
     frontFoodCards = new List<FrontFoodCard>();
     this.loadMenu();
+
+    headerImage = NetworkImage(
+      'http://www.ukpreppersguide.co.uk/wp-content/uploads/2015/08/empty-plate.jpg',
+    );
+
     _scrollController = new ScrollController(keepScrollOffset: false);
     _scrollController.addListener(() {
       scrollOffset = menuHeight - _scrollController.offset;
-      this.setState(() {});
+      if (scrollOffset > 0.0) {
+        this.setState(() {});
+      }
     });
 
     super.initState();
@@ -69,7 +74,6 @@ class _CoreAppState extends State<CoreApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("cookie2");
     return new Scaffold(
       body: Stack(
         children: <Widget>[
@@ -80,85 +84,28 @@ class _CoreAppState extends State<CoreApp> {
                 Expanded(
                   child: Container(
                     color: new Color(0xFFF2F2F2),
-                    child: new StaggeredGridView.countBuilder(
-                      crossAxisCount: 1,
-                      itemCount: frontFoodCards.length + 2,
-                      physics: new CustomFreeScrollBouncePhysics(),
-                      itemBuilder: (BuildContext context, int index) {
-                        print("cookie");
-                        if (index == 0 || index == frontFoodCards.length + 1) {
-                          return new Container(height: 62.0);
-                        }
-
-                        return new FoodCard(frontFoodCards[index - 1].title,
-                            topRightNumber: frontFoodCards[index - 1].price,
-                            topLeftText: frontFoodCards[index - 1].restaurant,
-                            imageUrl: frontFoodCards[index - 1].imageUrl,
-                            topLeftIcon: Icons.fastfood,
-                            height: 200.0,
-                            description: frontFoodCards[index - 1].description);
-                      },
-                      controller: _scrollController,
-                      staggeredTileBuilder: (index) => new StaggeredTile.fit(1),
-                    ),
+                    child: new FoodCardScroller(
+                        frontFoodCards: frontFoodCards,
+                        scrollController: _scrollController),
                   ),
                 ),
               ],
             ),
           ),
-          Transform(
-            transform: new Matrix4.translationValues(0.0, 0.0, 0.0),
-            child: Container(
-              height: scrollOffset < 0.0 ? 0.0 : scrollOffset,
-              child: Center(
-                child: Stack(
-                  children: [
-                    new Container(
-                      decoration: const BoxDecoration(
-                        image: const DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            'http://www.ukpreppersguide.co.uk/wp-content/uploads/2015/08/empty-plate.jpg',
-                          ),
-                        ),
-                      ),
-                    ),
-                    Opacity(
-                      opacity: clamp(1.0 - (scrollOffset * 0.0015), 0.0, 1.0),
-                      child: Container(
-                        color: new Color(0x77000000),
-                      ),
-                    ),
-                    Align(
-                      alignment: new Alignment(0.0, -0.5),
-                      child: Transform(
-                        transform: Matrix4.translationValues(
-                            0.0, scrollOffset - 500.0, 0.0),
-                        child: new ShadowText(
-                          'Hungry?',
-                          style: new TextStyle(
-                            color: Colors.white,
-                            fontSize: 22.0,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
+          new ExpandingHeader(image: headerImage, scrollOffset: scrollOffset),
+          new VerticalGradient(
+            height: menuHeight,
+            colorStart: new Color(0xDD000000),
+            colorEnd: Colors.transparent,
+          ),
+          new VerticalGradient(
+            height: menuHeight,
+            colorStart: Colors.transparent,
+            colorEnd: new Color(0xDD000000),
+            alignment: Alignment.bottomCenter,
           ),
           Align(
-              alignment: new Alignment(0.0, -1.0),
-              child: new VerticalGradient(
-                  menuHeight, new Color(0xDD000000), Colors.transparent)),
-          Align(
-            alignment: new Alignment(0.0, 1.0),
-            child: new VerticalGradient(
-                menuHeight, Colors.transparent, new Color(0xDD000000)),
-          ),
-          Align(
-            alignment: new Alignment(-1.0, -1.0),
+            alignment: Alignment.topLeft,
             child: Padding(
               padding: const EdgeInsets.only(top: 4.0),
               child: new IconButton(
@@ -171,7 +118,7 @@ class _CoreAppState extends State<CoreApp> {
             ),
           ),
           Align(
-            alignment: new Alignment(1.0, -1.0),
+            alignment: Alignment.topRight,
             child: Padding(
               padding: const EdgeInsets.only(top: 4.0),
               child: new IconButton(
