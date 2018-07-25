@@ -5,10 +5,10 @@ import 'dart:core';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:prototype_dynamic_ui/expanding_header.dart';
 import 'package:prototype_dynamic_ui/food_card_scroller.dart';
 import 'package:prototype_dynamic_ui/general/general.dart';
 import 'package:prototype_dynamic_ui/model/food_details.dart';
+import 'package:prototype_dynamic_ui/ui/expanding_header.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/vertical_gradient.dart';
 import 'package:prototype_dynamic_ui/ui/title_bar.dart';
 
@@ -92,7 +92,8 @@ class _CoreAppState extends State<CoreApp> {
               ],
             ),
           ),
-          new ExpandingHeader(image: headerImage, scrollOffset: scrollOffset),
+          new ExpandingHeader(
+              image: headerImage, scrollOffset: scrollOffset, text: 'Hungry?'),
           new VerticalGradient(
             height: menuHeight,
             colorStart: new Color(0xDD000000),

@@ -5,8 +5,9 @@ import 'package:prototype_dynamic_ui/ui/shadow/shadow.dart';
 class ExpandingHeader extends StatelessWidget {
   final double scrollOffset;
   final ImageProvider image;
+  final String text;
 
-  const ExpandingHeader({this.image, this.scrollOffset});
+  const ExpandingHeader({this.image, this.scrollOffset, this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class ExpandingHeader extends StatelessWidget {
                 transform:
                     Matrix4.translationValues(0.0, scrollOffset - 500.0, 0.0),
                 child: new ShadowText(
-                  'Hungry?',
+                  text,
                   style: new TextStyle(
                     color: Colors.white,
                     fontSize: 22.0,

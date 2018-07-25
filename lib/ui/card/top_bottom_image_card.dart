@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:prototype_dynamic_ui/ui/animated_image.dart';
+import 'package:prototype_dynamic_ui/ui/animated_up_down_image.dart';
 
 class FoodCard extends StatelessWidget {
   final String title;
   final IconData topLeftIcon; // TODO: Swap with restaurant logo.
   final String topLeftText;
-  final double topRightNumber;
+  final String topRightText;
   final String imageUrl;
   final String description;
   final double height;
 
   FoodCard(this.title,
-      {this.topRightNumber,
+      {this.topRightText,
       this.topLeftText,
       this.imageUrl,
       this.topLeftIcon,
@@ -50,7 +50,7 @@ class FoodCard extends StatelessWidget {
                     ),
                     Align(
                       child: new Text(
-                        '${topRightNumber.toStringAsFixed(0)} rsd',
+                        topRightText,
                         textAlign: TextAlign.right,
                         style: new TextStyle(
                             color: Colors.blueAccent, fontSize: 12.0),
@@ -60,7 +60,7 @@ class FoodCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: AnimatedImage(imageUrl),
+                child: AnimatedUpDownImage(imageUrl),
               ),
               Align(
                 alignment: new Alignment(1.0, 0.0),
