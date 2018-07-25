@@ -24,6 +24,7 @@ class _AnimatedImageState extends State<AnimatedImage>
   Animation<double> animation;
 
   double animationValue = 0.0;
+  double animationValueOld = 0.0;
   ForwardBackwardState forwardBackwardState;
 
   Random random = new Random();
@@ -43,51 +44,54 @@ class _AnimatedImageState extends State<AnimatedImage>
     animation =
         new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
     animation.addListener(() {
-      this.setState(() {
-        if (animation.isCompleted) {
-          switch (forwardBackwardState) {
-            case ForwardBackwardState.forward:
-              controller.duration =
-                  new Duration(milliseconds: 2000 + random.nextInt(3000));
-              forwardBackwardState = ForwardBackwardState.end;
-              break;
-
-            case ForwardBackwardState.end:
-              controller.duration =
-                  new Duration(milliseconds: 1000 + random.nextInt(5000));
-              forwardBackwardState = ForwardBackwardState.backward;
-              break;
-
-            case ForwardBackwardState.backward:
-              controller.duration =
-                  new Duration(milliseconds: 2000 + random.nextInt(3000));
-              forwardBackwardState = ForwardBackwardState.start;
-              break;
-
-            case ForwardBackwardState.start:
-              controller.duration =
-                  new Duration(milliseconds: 1000 + random.nextInt(5000));
-              forwardBackwardState = ForwardBackwardState.forward;
-              break;
-          }
-
-          controller.reset();
-          controller.forward();
-        }
-
+      animationValueOld = animationValue;
+      if (animation.isCompleted) {
         switch (forwardBackwardState) {
           case ForwardBackwardState.forward:
-            animationValue = animation.value;
+            controller.duration =
+            new Duration(milliseconds: 2000 + random.nextInt(3000));
+            forwardBackwardState = ForwardBackwardState.end;
+            break;
+
+          case ForwardBackwardState.end:
+            controller.duration =
+            new Duration(milliseconds: 1000 + random.nextInt(5000));
+            forwardBackwardState = ForwardBackwardState.backward;
             break;
 
           case ForwardBackwardState.backward:
-            animationValue = 1.0 - animation.value;
+            controller.duration =
+            new Duration(milliseconds: 2000 + random.nextInt(3000));
+            forwardBackwardState = ForwardBackwardState.start;
             break;
 
-          default:
+          case ForwardBackwardState.start:
+            controller.duration =
+            new Duration(milliseconds: 1000 + random.nextInt(5000));
+            forwardBackwardState = ForwardBackwardState.forward;
             break;
         }
-      });
+
+        controller.reset();
+        controller.forward();
+      }
+
+      switch (forwardBackwardState) {
+        case ForwardBackwardState.forward:
+          animationValue = animation.value;
+          break;
+
+        case ForwardBackwardState.backward:
+          animationValue = 1.0 - animation.value;
+          break;
+
+        default:
+          break;
+      }
+
+      if (animationValueOld != animationValue) {
+        this.setState(() {});
+      }
     });
     animation.addStatusListener((AnimationStatus status) {});
 

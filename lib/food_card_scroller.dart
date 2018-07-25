@@ -13,7 +13,7 @@ class FoodCardScroller extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new StaggeredGridView.countBuilder(
-      crossAxisCount: 1,
+      crossAxisCount: 2,
       itemCount: frontFoodCards.length + 2,
       physics: new CustomFreeScrollBouncePhysics(),
       itemBuilder: (BuildContext context, int index) {
@@ -26,11 +26,16 @@ class FoodCardScroller extends StatelessWidget {
             topLeftText: frontFoodCards[index - 1].restaurant,
             imageUrl: frontFoodCards[index - 1].imageUrl,
             topLeftIcon: Icons.fastfood,
-            height: 200.0,
             description: frontFoodCards[index - 1].description);
       },
       controller: scrollController,
-      staggeredTileBuilder: (index) => new StaggeredTile.fit(1),
+      staggeredTileBuilder: (index) {
+        if (index == 0 || index == frontFoodCards.length + 1) {
+          return new StaggeredTile.fit(2);
+        }
+
+        return new StaggeredTile.count(2, 1);
+      },
     );
   }
 }
