@@ -5,12 +5,15 @@ class FrontFoodCard {
   String imageUrl;
   double price;
 
+  bool imageLoaded;
+
   FrontFoodCard(
       {this.title,
       this.price,
       this.restaurant,
       this.description,
-      this.imageUrl});
+        this.imageUrl,
+        this.imageLoaded = false});
 
   factory FrontFoodCard.fromJson(Map<String, dynamic> parsedJson) {
     return FrontFoodCard(
@@ -18,6 +21,8 @@ class FrontFoodCard {
         price: parsedJson['price'],
         restaurant: parsedJson['restaurant'],
         description: parsedJson['description'],
-        imageUrl: parsedJson['imageUrl']);
+        imageUrl: parsedJson['imageUrl'],
+
+        imageLoaded: false);
   }
 }
