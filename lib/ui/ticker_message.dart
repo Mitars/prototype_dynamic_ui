@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prototype_dynamic_ui/general/animation.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/shadow.dart';
 
 class TickerMessage extends StatefulWidget {
@@ -12,44 +13,68 @@ class TickerMessage extends StatefulWidget {
 
 class _TickerMessageState extends State<TickerMessage>
     with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> animation;
+  AnimationCore animation;
+  ScrollController scrollController;
+  var initalLaunch;
 
   @override
   void initState() {
-    animationController =
-        new AnimationController(duration: Duration(seconds: 20), vsync: this);
+    scrollController = new ScrollController(keepScrollOffset: false);
     animation =
-        new CurvedAnimation(parent: animationController, curve: Curves.linear);
-    animation.addListener(() {
-      this.setState(() {});
+    new AnimationCore(this, new Duration(seconds: 10), Curves.linear);
+
+    initalLaunch = true;
+    animation.addBeforeDefaultListener(() {
+      if (scrollController.position.maxScrollExtent != null) {
+        if (initalLaunch) {
+          initalLaunch = false;
+          animation.duration(Duration(
+              milliseconds: scrollController.position.maxScrollExtent.toInt() *
+                  25));
+          animation.reset();
+          animation.repeat();
+        }
+        scrollController.jumpTo(
+            scrollController.position.maxScrollExtent * animation.value);
+      }
     });
-
-    animation.addStatusListener((AnimationStatus status) {});
-
-    animationController.repeat();
+    animation.repeat();
 
     super.initState();
   }
 
   @override
   void dispose() {
-    animationController.dispose();
+    animation.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return OverflowBox(
-      child: Transform(
-        //TODO: Does not support dynamic sized text nor alignment
-        transform: new Matrix4.translationValues(
-            500 - animation.value * 1000, 30.0, 0.0),
-        child: ShadowBoxText(
-          widget.message,
-          style: new TextStyle(
-            color: Colors.white,
-            fontSize: 12.0,
+    var width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0),
+      child: Container(
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          controller: scrollController,
+          primary: false,
+          child: Row(
+            children: [
+              Container(width: width),
+              ShadowBoxText(
+                widget.message,
+                style: new TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.0,
+                ),
+              ),
+              Container(width: width),
+            ],
           ),
         ),
       ),

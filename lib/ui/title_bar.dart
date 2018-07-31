@@ -30,7 +30,7 @@ class TitleBar extends StatelessWidget {
     userImage = NetworkImage(userImageUrl);
     orderImage = NetworkImage(selectionImageUrl);
 
-    return Stack(
+    return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 45.0),

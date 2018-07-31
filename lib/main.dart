@@ -7,9 +7,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:prototype_dynamic_ui/food_card_scroller.dart';
+import 'package:prototype_dynamic_ui/general/animation.dart';
 import 'package:prototype_dynamic_ui/general/general.dart';
 import 'package:prototype_dynamic_ui/model/food_details.dart';
-import 'package:prototype_dynamic_ui/ui/animated_rotation_image.dart';
+import 'package:prototype_dynamic_ui/ui/animated_rotation.dart';
 import 'package:prototype_dynamic_ui/ui/expanding_header.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/vertical_gradient.dart';
 import 'package:prototype_dynamic_ui/ui/title_bar.dart';
@@ -37,16 +38,18 @@ class CoreApp extends StatefulWidget {
 
 class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
   static const double menuHeight = 76.0;
+  static const double gradientHeight = 76.0;
   double scrollOffset = menuHeight;
   ScrollController _scrollController;
   List<FrontFoodCard> frontFoodCards;
   ImageProvider headerImage;
 
-  AnimationController controller;
-  Animation<double> animation;
+  AnimationCore animation;
 
   Future loadMenu() async {
     String jsonString = await rootBundle.loadString('assets/food.json');
+    // TODO: Remove used for testing on device.
+    await new Future.delayed(new Duration(milliseconds: 3000));
     setState(() {
       var jsonQuestions = json.decode(jsonString);
       for (var question in jsonQuestions) {
@@ -78,26 +81,21 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
       }
     });
 
-    controller = new AnimationController(
-        duration: new Duration(milliseconds: 1000), vsync: this);
-    animation = new CurvedAnimation(parent: controller, curve: Curves.linear);
-    animation.addListener(() {
-      this.setState(() {});
-    });
-    animation.addStatusListener((AnimationStatus status) {});
+    animation = new AnimationCore.defaultListener(
+        this, new Duration(milliseconds: 1000), Curves.linear);
 
     super.initState();
   }
 
   loadingCompleted() {
     if (frontFoodCards.every((card) => card.imageLoaded)) {
-      controller.forward();
+      animation.forward();
     }
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    animation.dispose();
     super.dispose();
   }
 
@@ -107,7 +105,16 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
       body: Stack(
         children: [
           Container(
-            child: new AnimatedRotationImage(),
+            child: new AnimatedRotation(
+              child: new Text(
+                "EB",
+                style: new TextStyle(
+                  color: new Color(0xFFfb4b4f),
+                  fontSize: 62.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             color: Colors.black,
             constraints: BoxConstraints.expand(),
           ),
@@ -123,8 +130,11 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
                         child: Container(
                           color: new Color(0xFFF2F2F2),
                           child: new FoodCardScroller(
-                              frontFoodCards: frontFoodCards,
-                              scrollController: _scrollController),
+                            frontFoodCards: frontFoodCards,
+                            scrollController: _scrollController,
+                            topPadding: menuHeight,
+                            bottomPadding: gradientHeight,
+                          ),
                         ),
                       ),
                     ],
@@ -135,12 +145,12 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
                     scrollOffset: scrollOffset,
                     text: 'Hungry?'),
                 new VerticalGradient(
-                  height: menuHeight,
+                  height: gradientHeight,
                   colorStart: new Color(0xDD000000),
                   colorEnd: Colors.transparent,
                 ),
                 new VerticalGradient(
-                  height: menuHeight,
+                  height: gradientHeight,
                   colorStart: Colors.transparent,
                   colorEnd: new Color(0xDD000000),
                   alignment: Alignment.bottomCenter,

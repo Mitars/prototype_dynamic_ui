@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:prototype_dynamic_ui/general/animation.dart';
 import 'package:prototype_dynamic_ui/general/general.dart';
 
 enum ForwardBackwardState {
@@ -20,13 +21,8 @@ class AnimatedUpDownImage extends StatefulWidget {
 
 class _AnimatedUpDownImageState extends State<AnimatedUpDownImage>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
-
-  double animationValue = 0.0;
-  double animationValueOld = 0.0;
+  AnimationCore animation;
   ForwardBackwardState forwardBackwardState;
-
   NetworkImage image;
 
   @override
@@ -50,10 +46,8 @@ class _AnimatedUpDownImageState extends State<AnimatedUpDownImage>
 
     forwardBackwardState = ForwardBackwardState.forward;
 
-    controller = new AnimationController(
-        duration: new Duration(milliseconds: 5000), vsync: this);
-    animation =
-        new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
+    animation = new AnimationCore(
+        this, new Duration(milliseconds: 5000), Curves.easeInOut);
     animation.addListener(() {
       if (animation.isCompleted) {
         var animationIndex =
@@ -61,33 +55,32 @@ class _AnimatedUpDownImageState extends State<AnimatedUpDownImage>
             ? 0
             : forwardBackwardState.index + 1;
         forwardBackwardState = ForwardBackwardState.values[animationIndex];
-        controller.duration = animationStates[forwardBackwardState]();
-        controller.reset();
-        controller.forward();
+        animation.duration(animationStates[forwardBackwardState]());
+        animation.reset();
+        animation.forward();
       }
 
-      animationValueOld = animationValue;
+      var animationValueOld = animation.value;
 
       if (forwardBackwardState == ForwardBackwardState.forward) {
-        animationValue = animation.value;
+        animation.value = animation.animatedValue;
       } else if (forwardBackwardState == ForwardBackwardState.backward) {
-        animationValue = 1.0 - animation.value;
+        animation.value = 1.0 - animation.animatedValue;
       }
 
-      if (animationValueOld != animationValue) {
+      if (animationValueOld != animation.value) {
         this.setState(() {});
       }
     });
-    animation.addStatusListener((AnimationStatus status) {});
 
-    controller.forward();
+    animation.forward();
 
     super.initState();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    animation.dispose();
     super.dispose();
   }
 
@@ -96,7 +89,7 @@ class _AnimatedUpDownImageState extends State<AnimatedUpDownImage>
     return Container(
       decoration: new BoxDecoration(
         image: new DecorationImage(
-          alignment: new Alignment(0.0, animationValue * 2.0 - 1.0),
+          alignment: new Alignment(0.0, animation.value * 2.0 - 1.0),
           image: image,
           fit: BoxFit.cover,
         ),

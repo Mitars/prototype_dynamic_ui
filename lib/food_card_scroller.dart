@@ -7,8 +7,13 @@ import 'package:prototype_dynamic_ui/ui/card/top_bottom_image_card.dart';
 class FoodCardScroller extends StatelessWidget {
   final List<FrontFoodCard> frontFoodCards;
   final ScrollController scrollController;
+  final double topPadding;
+  final double bottomPadding;
 
-  const FoodCardScroller({this.frontFoodCards, this.scrollController});
+  const FoodCardScroller({this.frontFoodCards,
+    this.scrollController,
+    this.topPadding,
+    this.bottomPadding});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +22,10 @@ class FoodCardScroller extends StatelessWidget {
       itemCount: frontFoodCards.length + 2,
       physics: new CustomFreeScrollBouncePhysics(),
       itemBuilder: (BuildContext context, int index) {
-        if (index == 0 || index == frontFoodCards.length + 1) {
-          return new Container(height: 62.0);
+        if (index == 0) {
+          return new Container(height: topPadding);
+        } else if (index == frontFoodCards.length + 1) {
+          return new Container(height: bottomPadding);
         }
 
         return new FoodCard(frontFoodCards[index - 1].title,
