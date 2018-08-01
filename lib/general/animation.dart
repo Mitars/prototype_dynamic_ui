@@ -50,6 +50,8 @@ class AnimationCore {
 
   bool get isCompleted => animation.isCompleted;
 
+  bool get isStarted => animation.status == AnimationStatus.forward;
+
   void addListener(VoidCallback listener) {
     animation.addListener(listener);
   }

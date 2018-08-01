@@ -10,10 +10,12 @@ import 'package:prototype_dynamic_ui/general/animation.dart';
 import 'package:prototype_dynamic_ui/general/general.dart';
 import 'package:prototype_dynamic_ui/loading.dart';
 import 'package:prototype_dynamic_ui/model/food_details.dart';
-import 'package:prototype_dynamic_ui/ui/circle_reveal_clipper.dart';
 import 'package:prototype_dynamic_ui/ui/expanding_header.dart';
+import 'package:prototype_dynamic_ui/ui/image_button.dart';
+import 'package:prototype_dynamic_ui/ui/reveal_circle_painter.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/vertical_gradient.dart';
 import 'package:prototype_dynamic_ui/ui/title_bar.dart';
+import 'package:prototype_dynamic_ui/ui/visible_widget.dart';
 
 void main() {
   runApp(new MaterialApp(
@@ -37,14 +39,14 @@ class CoreApp extends StatefulWidget {
 }
 
 class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
-  static const double menuHeight = 76.0;
-  static const double gradientHeight = 76.0;
-  double scrollOffset = menuHeight;
+  double menuHeight = 76.0;
+  double gradientHeight = 76.0;
+  double scrollOffset;
   ScrollController _scrollController;
   List<FrontFoodCard> frontFoodCards;
   ImageProvider headerImage;
-
   AnimationCore animation;
+  bool dataLoaded = false;
 
   Future loadMenu() async {
     String jsonString = await rootBundle.loadString('assets/food.json');
@@ -66,6 +68,9 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
 
   @override
   initState() {
+    scrollOffset = menuHeight;
+    dataLoaded = false;
+
     frontFoodCards = new List<FrontFoodCard>();
     this.loadMenu();
 
@@ -82,13 +87,14 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
     });
 
     animation = new AnimationCore.defaultListener(
-        this, new Duration(milliseconds: 1000), Curves.linear);
+        this, new Duration(milliseconds: 800), Curves.linear);
 
     super.initState();
   }
 
   loadingCompleted() {
     if (frontFoodCards.every((card) => card.imageLoaded)) {
+      dataLoaded = true;
       animation.forward();
     }
   }
@@ -104,92 +110,124 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
     return new Scaffold(
       body: Stack(
         children: [
-          LoadingScreen(),
-          ClipOval(
-            clipper: new CircleRevealClipper(
-              animation.value,
-              reclip: !animation.isCompleted,
-            ),
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  //color: new Color(0xFFF2F2F2),
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          color: new Color(0xFFF2F2F2),
-                          child: new FoodCardScroller(
-                            frontFoodCards: frontFoodCards,
-                            scrollController: _scrollController,
-                            topPadding: menuHeight,
-                            bottomPadding: gradientHeight,
-                          ),
+          Stack(
+            children: <Widget>[
+              Container(
+                //color: new Color(0xFFF2F2F2),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        color: new Color(0xFFF2F2F2),
+                        child: new FoodCardScroller(
+                          frontFoodCards: frontFoodCards,
+                          scrollController: _scrollController,
+                          topPadding: menuHeight,
+                          bottomPadding: gradientHeight,
                         ),
                       ),
+                    ),
+                  ],
+                ),
+              ),
+              new ExpandingHeader(
+                  image: headerImage,
+                  scrollOffset: scrollOffset,
+                  text: 'Hungry?'),
+              new VerticalGradient(
+                height: gradientHeight,
+                colorStart: new Color(0xDD000000),
+                colorEnd: Colors.transparent,
+              ),
+              new VerticalGradient(
+                height: gradientHeight,
+                colorStart: Colors.transparent,
+                colorEnd: new Color(0xDD000000),
+                alignment: Alignment.bottomCenter,
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  child: new Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(padding: const EdgeInsets.all(0.0)),
+                      ImageButton(text: "Home",
+                        icon: Icons.favorite,
+                        color: Colors.white,
+                        selected: true,),
+                      ImageButton(text: "Restaurants",
+                          icon: Icons.home,
+                          color: new Color(0x99FFFFFF)),
+                      ImageButton(text: "Courses",
+                          icon: Icons.restaurant_menu,
+                          color: new Color(0x99FFFFFF)),
+                      Padding(padding: const EdgeInsets.all(0.0)),
                     ],
                   ),
                 ),
-                new ExpandingHeader(
-                    image: headerImage,
-                    scrollOffset: scrollOffset,
-                    text: 'Hungry?'),
-                new VerticalGradient(
-                  height: gradientHeight,
-                  colorStart: new Color(0xDD000000),
-                  colorEnd: Colors.transparent,
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: new IconButton(
+                      icon: new Icon(
+                        Icons.menu,
+                        color: new Color(0x77FFFFFF),
+                        size: 32.0,
+                      ),
+                      onPressed: () {}),
                 ),
-                new VerticalGradient(
-                  height: gradientHeight,
-                  colorStart: Colors.transparent,
-                  colorEnd: new Color(0xDD000000),
-                  alignment: Alignment.bottomCenter,
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: new IconButton(
+                      icon: new Icon(
+                        Icons.settings,
+                        color: new Color(0x77FFFFFF),
+                        size: 28.0,
+                      ),
+                      onPressed: () {}),
                 ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: new IconButton(
-                        icon: new Icon(
-                          Icons.menu,
-                          color: new Color(0x77FFFFFF),
-                          size: 32.0,
-                        ),
-                        onPressed: () {}),
-                  ),
+              ),
+              Transform(
+                transform: Matrix4.translationValues(
+                    0.0, clampDown(scrollOffset - menuHeight, 0.0), 0.0),
+                child: Container(
+                  height: menuHeight,
+                  child: new TitleBar(
+                      'Mitar',
+                      'https://lh3.googleusercontent.com/QGuHu5iREd_soS1IfdXO_P7cYaWcN-gbvtfVzJi4fAWmV-Y8bAF93xF2xW5BXnMMQao41w-cmzjB32nc=s139-rw',
+                      'Last Ordered 09:54',
+                      '520 rsd',
+                      Icons.account_balance_wallet,
+                      'Spagete Bolonjeze',
+                      'https://img.taste.com.au/VFkGwzXU/w720-h480-cfill-q80/taste/2016/11/spaghetti-bolognese-106560-1.jpeg',
+                      'Extra Food',
+                      'Not feeling hungry? How about a refreshing salad?'),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: new IconButton(
-                        icon: new Icon(
-                          Icons.settings,
-                          color: new Color(0x77FFFFFF),
-                          size: 28.0,
-                        ),
-                        onPressed: () {}),
-                  ),
-                ),
-                Transform(
-                  transform: Matrix4.translationValues(
-                      0.0, clampDown(scrollOffset - menuHeight, 0.0), 0.0),
-                  child: Container(
-                    height: menuHeight,
-                    child: new TitleBar(
-                        'Mitar',
-                        'https://lh3.googleusercontent.com/QGuHu5iREd_soS1IfdXO_P7cYaWcN-gbvtfVzJi4fAWmV-Y8bAF93xF2xW5BXnMMQao41w-cmzjB32nc=s139-rw',
-                        'Last Ordered 09:54',
-                        '520 rsd',
-                        Icons.account_balance_wallet,
-                        'Spagete Bolonjeze',
-                        'https://img.taste.com.au/VFkGwzXU/w720-h480-cfill-q80/taste/2016/11/spaghetti-bolognese-106560-1.jpeg',
-                        'Extra Food',
-                        'Not feeling hungry? How about a refreshing salad?'),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              VisibleWidget(LoadingScreen(), !dataLoaded),
+              VisibleWidget(
+                  new CustomPaint(
+                      painter: new RevealCirclePainter(
+                        radiusPercent: animation.value,
+                      ),
+                      child: Container(
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width,
+                          height: MediaQuery
+                              .of(context)
+                              .size
+                              .height)),
+                  animation.isStarted),
+            ],
           ),
         ],
       ),
