@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:prototype_dynamic_ui/food_card_scroller.dart';
 import 'package:prototype_dynamic_ui/general/animation.dart';
 import 'package:prototype_dynamic_ui/general/general.dart';
+import 'package:prototype_dynamic_ui/loading.dart';
 import 'package:prototype_dynamic_ui/model/food_details.dart';
-import 'package:prototype_dynamic_ui/ui/animated_rotation.dart';
+import 'package:prototype_dynamic_ui/ui/circle_reveal_clipper.dart';
 import 'package:prototype_dynamic_ui/ui/expanding_header.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/vertical_gradient.dart';
 import 'package:prototype_dynamic_ui/ui/title_bar.dart';
@@ -104,22 +104,12 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
     return new Scaffold(
       body: Stack(
         children: [
-          Container(
-            child: new AnimatedRotation(
-              child: new Text(
-                "EB",
-                style: new TextStyle(
-                  color: new Color(0xFFfb4b4f),
-                  fontSize: 62.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            color: Colors.black,
-            constraints: BoxConstraints.expand(),
-          ),
+          LoadingScreen(),
           ClipOval(
-            clipper: new CircleRevealClipper(animation.value),
+            clipper: new CircleRevealClipper(
+              animation.value,
+              reclip: !animation.isCompleted,
+            ),
             child: Stack(
               children: <Widget>[
                 Container(
@@ -204,30 +194,5 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
         ],
       ),
     );
-  }
-}
-
-class CircleRevealClipper extends CustomClipper<Rect> {
-  final double revealPercent;
-
-  CircleRevealClipper(this.revealPercent);
-
-  @override
-  Rect getClip(Size size) {
-    final epicenter = new Offset(size.width / 2, size.height / 2);
-
-    double theta = atan(epicenter.dy / epicenter.dx);
-    final distanceToCorner = epicenter.dy / sin(theta);
-
-    final radius = distanceToCorner * revealPercent;
-    final diameter = 2 * radius;
-
-    return new Rect.fromLTWH(
-        epicenter.dx - radius, epicenter.dy - radius, diameter, diameter);
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Rect> oldClipper) {
-    return true;
   }
 }
