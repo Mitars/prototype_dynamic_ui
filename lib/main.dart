@@ -9,10 +9,11 @@ import 'package:prototype_dynamic_ui/food_card_scroller.dart';
 import 'package:prototype_dynamic_ui/general/animation.dart';
 import 'package:prototype_dynamic_ui/general/general.dart';
 import 'package:prototype_dynamic_ui/loading.dart';
+import 'package:prototype_dynamic_ui/loading_transition.dart';
 import 'package:prototype_dynamic_ui/model/food_details.dart';
+import 'package:prototype_dynamic_ui/navigation_menu.dart';
+import 'package:prototype_dynamic_ui/ui/animated_slide.dart';
 import 'package:prototype_dynamic_ui/ui/expanding_header.dart';
-import 'package:prototype_dynamic_ui/ui/image_button.dart';
-import 'package:prototype_dynamic_ui/ui/reveal_circle_painter.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/vertical_gradient.dart';
 import 'package:prototype_dynamic_ui/ui/title_bar.dart';
 import 'package:prototype_dynamic_ui/ui/visible_widget.dart';
@@ -51,7 +52,7 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
   Future loadMenu() async {
     String jsonString = await rootBundle.loadString('assets/food.json');
     // TODO: Remove used for testing on device.
-    await new Future.delayed(new Duration(milliseconds: 3000));
+    await new Future.delayed(new Duration(milliseconds: 3500));
     setState(() {
       var jsonQuestions = json.decode(jsonString);
       for (var question in jsonQuestions) {
@@ -145,28 +146,12 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
                 colorEnd: new Color(0xDD000000),
                 alignment: Alignment.bottomCenter,
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  child: new Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(padding: const EdgeInsets.all(0.0)),
-                      ImageButton(text: "Home",
-                        icon: Icons.favorite,
-                        color: Colors.white,
-                        selected: true,),
-                      ImageButton(text: "Restaurants",
-                          icon: Icons.home,
-                          color: new Color(0x99FFFFFF)),
-                      ImageButton(text: "Courses",
-                          icon: Icons.restaurant_menu,
-                          color: new Color(0x99FFFFFF)),
-                      Padding(padding: const EdgeInsets.all(0.0)),
-                    ],
-                  ),
+              VisibleWidget(
+                AnimatedSlide(
+                  offset: new Offset(0.0, 100.0),
+                  child: NavigationMenu(),
                 ),
+                dataLoaded,
               ),
               Align(
                 alignment: Alignment.topLeft,
@@ -194,39 +179,32 @@ class _CoreAppState extends State<CoreApp> with SingleTickerProviderStateMixin {
                       onPressed: () {}),
                 ),
               ),
-              Transform(
-                transform: Matrix4.translationValues(
-                    0.0, clampDown(scrollOffset - menuHeight, 0.0), 0.0),
-                child: Container(
-                  height: menuHeight,
-                  child: new TitleBar(
-                      'Mitar',
-                      'https://lh3.googleusercontent.com/QGuHu5iREd_soS1IfdXO_P7cYaWcN-gbvtfVzJi4fAWmV-Y8bAF93xF2xW5BXnMMQao41w-cmzjB32nc=s139-rw',
-                      'Last Ordered 09:54',
-                      '520 rsd',
-                      Icons.account_balance_wallet,
-                      'Spagete Bolonjeze',
-                      'https://img.taste.com.au/VFkGwzXU/w720-h480-cfill-q80/taste/2016/11/spaghetti-bolognese-106560-1.jpeg',
-                      'Extra Food',
-                      'Not feeling hungry? How about a refreshing salad?'),
+              VisibleWidget(
+                AnimatedSlide(
+                  offset: new Offset(0.0, -100.0),
+                  child: Transform(
+                    transform: Matrix4.translationValues(
+                        0.0, clampDown(scrollOffset - menuHeight, 0.0), 0.0),
+                    child: Container(
+                      height: menuHeight,
+                      child: new TitleBar(
+                          'Mitar',
+                          'https://lh3.googleusercontent.com/QGuHu5iREd_soS1IfdXO_P7cYaWcN-gbvtfVzJi4fAWmV-Y8bAF93xF2xW5BXnMMQao41w-cmzjB32nc=s139-rw',
+                          'Last Ordered 09:54',
+                          '520 rsd',
+                          Icons.account_balance_wallet,
+                          'Spagete Bolonjeze',
+                          'https://img.taste.com.au/VFkGwzXU/w720-h480-cfill-q80/taste/2016/11/spaghetti-bolognese-106560-1.jpeg',
+                          'Extra Food',
+                          'Not feeling hungry? How about a refreshing salad?',
+                          shouldRunAnimation: dataLoaded),
+                    ),
+                  ),
                 ),
+                dataLoaded,
               ),
               VisibleWidget(LoadingScreen(), !dataLoaded),
-              VisibleWidget(
-                  new CustomPaint(
-                      painter: new RevealCirclePainter(
-                        radiusPercent: animation.value,
-                      ),
-                      child: Container(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                          height: MediaQuery
-                              .of(context)
-                              .size
-                              .height)),
-                  animation.isStarted),
+              VisibleWidget(LoadingTransition(), dataLoaded),
             ],
           ),
         ],

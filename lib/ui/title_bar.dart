@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_dynamic_ui/ui/ticker_message.dart';
+import 'package:prototype_dynamic_ui/ui/visible_widget.dart';
 
 class TitleBar extends StatelessWidget {
   final String userTitle;
@@ -11,6 +12,7 @@ class TitleBar extends StatelessWidget {
   final String selectionImageUrl;
   final String selectionSubText;
   final String tickerMessage;
+  final bool shouldRunAnimation;
 
   NetworkImage userImage;
   NetworkImage orderImage;
@@ -23,7 +25,8 @@ class TitleBar extends StatelessWidget {
       this.selectionTitle,
       this.selectionImageUrl,
       this.selectionSubText,
-      this.tickerMessage);
+      this.tickerMessage,
+      {this.shouldRunAnimation = true});
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +192,7 @@ class TitleBar extends StatelessWidget {
             ],
           ),
         ),
-        new TickerMessage(tickerMessage),
+        VisibleWidget(new TickerMessage(tickerMessage), shouldRunAnimation),
       ],
     );
   }

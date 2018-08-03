@@ -40,7 +40,6 @@ class AnimationCore {
 
       if (value != animation.value) {
         value = animation.value;
-
         _stateWithTickerProvider.setState(() {});
       }
     });
@@ -50,33 +49,21 @@ class AnimationCore {
 
   bool get isCompleted => animation.isCompleted;
 
+  bool get isDismissed => animation.isDismissed;
+
   bool get isStarted => animation.status == AnimationStatus.forward;
 
-  void addListener(VoidCallback listener) {
-    animation.addListener(listener);
-  }
+  void reset() => _controller.reset();
 
-  void duration(Duration duration) {
-    _controller.duration = duration;
-  }
+  void forward() => _controller.forward();
 
-  void reset() {
-    _controller.reset();
-  }
+  void repeat() => _controller.repeat();
 
-  void forward() {
-    _controller.forward();
-  }
+  void reverse() => _controller.reverse();
 
-  void repeat() {
-    _controller.repeat();
-  }
+  void dispose() => _controller.dispose();
 
-  void reverse() {
-    _controller.reverse();
-  }
+  void addListener(VoidCallback listener) => animation.addListener(listener);
 
-  void dispose() {
-    _controller.dispose();
-  }
+  void duration(Duration duration) => _controller.duration = duration;
 }

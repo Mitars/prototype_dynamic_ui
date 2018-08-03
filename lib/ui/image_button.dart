@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:prototype_dynamic_ui/ui/animated_flash.dart';
 import 'package:prototype_dynamic_ui/ui/shadow/shadow.dart';
+import 'package:prototype_dynamic_ui/ui/toggle_widget.dart';
 
 class ImageButton extends StatelessWidget {
   String text;
@@ -19,12 +21,12 @@ class ImageButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
-            width: 50.0,
-            height: 50.0,
+            width: 42.0,
+            height: 42.0,
             child: new Icon(
               icon,
               color: color,
-              size: 50.0,
+              size: 42.0,
             ),
             decoration: new BoxDecoration(
               boxShadow: [
@@ -40,14 +42,22 @@ class ImageButton extends StatelessWidget {
             text,
             style: new TextStyle(
               color: color,
-              fontSize: 12.0,
+              fontSize: 11.0,
             ),
           ),
-          new Container(
-            height: 6.0,
-            width: 70.0,
-            color: selected ? color : Colors.transparent,
-          ),
+          ToggleWidget(
+              widgetEnabled: AnimatedFlash(
+                child: new Container(
+                  height: 5.0,
+                  width: 60.0,
+                  color: color,
+                ),
+              ),
+              widgetDisabled: new Container(
+                height: 5.0,
+                width: 60.0,
+              ),
+              visible: selected),
         ],
       ),
     );
