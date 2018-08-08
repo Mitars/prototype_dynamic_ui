@@ -66,12 +66,12 @@ class TopBottomImageCard extends StatelessWidget {
                     AnimatedUpDownImage(imageUrl),
                     Container(
                       alignment: Alignment.bottomLeft,
-                      padding: EdgeInsets.only(left: 12.0, bottom: 2.0),
+                      padding: EdgeInsets.only(left: 9.0, bottom: 3.0),
                       child: ShadowText(
                         title,
                         style: new TextStyle(
                           color: Colors.white,
-                          fontSize: 28.0,
+                          fontSize: 29.0,
                         ),
                       ),
                     ),
