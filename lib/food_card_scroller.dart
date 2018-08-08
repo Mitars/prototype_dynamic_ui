@@ -28,7 +28,7 @@ class FoodCardScroller extends StatelessWidget {
           return new Container(height: bottomPadding);
         }
 
-        return new FoodCard(frontFoodCards[index - 1].title,
+        return new TopBottomImageCard(frontFoodCards[index - 1].title,
             topRightText: '${frontFoodCards[index - 1].price.toStringAsFixed(
                 0)} rsd',
             topLeftText: frontFoodCards[index - 1].restaurant,
